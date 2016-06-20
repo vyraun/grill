@@ -16,7 +16,7 @@ import lasagne.nonlinearities as NL
 
 
 game = 'Breakout'
-log_dir = '/Users/garrett/Box Sync/github/grill/log/vpg-' + game + '/'
+log_dir = '/Users/garrett/BoxSync/github/grill/log/vpg-' + game + '/'
 m = 4
 size = (84,84)
 env = gym.make(game + '-v0')

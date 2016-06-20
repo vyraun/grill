@@ -19,5 +19,5 @@ class Memory:
         return self._array[i]
 
     def sample(self, n, replace=True):
-        indices = np.random.choice(self.size, size=n, replace=replace)
+        indices = np.random.choice(len(self._array), size=n, replace=replace)
         return [self._array[i] for i in indices]

@@ -1,3 +1,4 @@
+import sys
 import gym
 import grill
 from grill.implementation import ConvolutionalNetwork
@@ -19,14 +20,15 @@ def update_epsilon(engine, _):
     itr = engine.state.itr
     policy.epsilon = max(1.0-itr/100000.0, 0.1)
 
-game = 'Breakout'
-log_dir = '/Users/garrett/Box Sync/github/grill/log/dqn-' + game + '/'
+# game = 'Breakout'
+game = sys.argv[1]
+log_dir = '/Users/garrett/BoxSync/github/grill/log/dqn-' + game + '/'
 m = 4
 size = (84,84)
 env = gym.make(game + '-v0')
 preprocess = atari_preprocessor(m=m, size=size)
 
-convnet = ConvolutionalNetwork((None, m, size[0], size[1]), env._n_actions)
+convnet = ConvolutionalNetwork((m, size[0], size[1]), env.action_space.n) #env._n_actions)
 try:
     convnet.load_params(log_dir + 'params.npz')
     print 'Successfully loaded network weights from file'
@@ -36,12 +38,12 @@ except:
 qfunction = ParametricQFunction(env, convnet)
 qgreedy = QGreedyPolicy(qfunction)
 policy = EpsilonGreedyPolicy(qgreedy, epsilon=0.5)
-dqn = DeepQLearning(qfunction)
+dqn = DeepQLearning(qfunction, N=10000)
 trainer = Engine(log_dir=log_dir)
 dqn.register_with_engine(trainer)
 trainer.register_callback('post-step', 'save', param_saver(convnet))
 #trainer.register_callback('pre-step', 'update epsilon', update_epsilon)
-trainer.run(policy, phi=preprocess, num_episodes=1000, render=True)
+trainer.run(policy, phi=preprocess, num_episodes=1000, render=False)
 
 player = Engine()
 player.run(EpsilonGreedyPolicy(qgreedy, epsilon=0.05), phi=preprocess, num_episodes=25, render=True)

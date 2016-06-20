@@ -30,5 +30,4 @@ class MultilayerPerceptron(TheanoFunction):
 
         self._output_var = L.get_output(l_output)
         self._param_vars = L.get_all_params(l_output, trainable=True)
-
         super(MultilayerPerceptron, self).__init__()

@@ -8,16 +8,8 @@ class TabularQFunction(DiscreteQFunction):
         super(TabularQFunction, self).__init__(env)
         self._table = defaultdict(lambda: default_value)
 
-    def get(self, observation, action, key=None):
-        obs_key = key or superhash(observation)
-        return self._table[(obs_key, action)]
+    def get(self, observation, action):
+        return self._table[(observation, action)]
 
-    def set(self, observation, action, value, key=None):
-        obs_key = key or superhash(observation)
-        self._table[(obs_key, action)] = value
-
-    # Technically didn't need to override this but it's much better not to
-    # rehash for every action
-    def get_all(self, observation):
-        obs_key = superhash(observation)
-        return [self.get(observation, action, obs_key) for action in range(self._num_actions)]
+    def set(self, observation, action, value):
+        self._table[(observation, action)] = value

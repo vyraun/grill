@@ -78,7 +78,6 @@ class Engine(object):
                 del callbacks[name]
 
     def _run_callbacks(self, event, **kwargs):
-        assert event in Engine.EVENTS
         episode = self.latest_episode()
         for name, callback in self._callbacks[event].iteritems():
             callback(self, episode)
@@ -101,8 +100,6 @@ class Engine(object):
             for t in range(max_path_length):
                 if render:
                     env.render()
-                    #import time
-                    #time.sleep(0.01)
                 episode.t = t
                 self._run_callbacks('pre-step')
                 action = policy.get_action(episode.latest_observation())

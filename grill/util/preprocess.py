@@ -7,6 +7,13 @@ def identity(raw_observation, _=None):
 def flatten(raw_observation, _=None):
     return raw_observation.flatten()
 
+def onehot_encoder(n):
+    def onehot(raw_observation, _=None):
+        v = np.zeros(n)
+        v[raw_observation] = 1
+        return v
+    return onehot
+
 def luminance(raw_observation, _=None):
     r, g, b = raw_observation[:,:,0], raw_observation[:,:,1], raw_observation[:,:,2]
     return 0.2126*r + 0.7152*g + 0.0722*b

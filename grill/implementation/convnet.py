@@ -13,12 +13,12 @@ class ConvolutionalNetwork(TheanoFunction):
             fc_nl=NL.rectify,
             output_nl=None  # Change to softmax to get probabilities
     ):
-        assert len(input_shape) == 4
+        assert len(input_shape) == 3
 
         self._input_var = T.ftensor4('input')
 
         l_prev = L.InputLayer(
-            shape=input_shape,
+            shape=(None,) + input_shape,
             input_var=self._input_var
         )
 

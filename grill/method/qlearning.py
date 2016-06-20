@@ -11,5 +11,5 @@ class QLearning(Method):
         terminal = episode.done
         current_q = self.qfunc.get(observation, action)
         value = current_q + self.learning_rate * \
-                (reward + engine.discount * self.q.best_action(next_observation) - current_q)
+                (reward + engine.discount * self.qfunc.best_value(next_observation) - current_q)
         self.qfunc.set(observation, action, value)

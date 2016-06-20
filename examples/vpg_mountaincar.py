@@ -16,7 +16,7 @@ import lasagne.nonlinearities as NL
 
 
 game = 'MountainCar'
-log_dir = '/Users/garrett/Box Sync/github/grill/log/vpg-' + game + '/'
+log_dir = '/Users/garrett/BoxSync/github/grill/log/vpg-' + game + '/'
 env = gym.make(game + '-v0')
 
 mlp = MultilayerPerceptron([2, 100, 3], output_nl=NL.softmax)

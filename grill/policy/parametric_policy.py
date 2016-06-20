@@ -21,7 +21,7 @@ class ParametricPolicy(Policy, TheanoContainer):
     def get_action(self, observation):
         output = self.implementation(add_dim(observation))[0]
         if self.interpretation == 'stochastic':
-            return np.random.choice(np.arange(len(output)), p=output)
+            return np.random.choice(len(output), p=output)
         elif self.interpretation == 'greedy-stochastic':
             return np.argmax(output)
         elif self.interpretation == 'direct':

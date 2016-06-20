@@ -10,10 +10,10 @@ class GradientMethod(Method):
         self.learning_rate = learning_rate
         self.batchsize = batchsize
 
-    def _build_update(self, inputs, param_vars, loss_var):
+    def _build_update(self, inputs, param_vars, loss_var, outputs=[]):
         grads = T.grad(loss_var, param_vars)
         self._update = theano.function(
-                inputs=inputs,
+                inputs=inputs, outputs=outputs,
                 updates=tuple((param, param - self.learning_rate*grads[i])
                         for i, param in enumerate(param_vars)),
                 allow_input_downcast=True

@@ -15,7 +15,7 @@ import lasagne.layers as L
 import lasagne.nonlinearities as NL
 
 game = 'MountainCar'
-log_dir = '/Users/garrett/Box Sync/github/grill/log/dqn-' + game + '/'
+log_dir = '/Users/garrett/BoxSync/github/grill/log/dqn-' + game + '/'
 env = gym.make(game + '-v0')
 
 mlp = MultilayerPerceptron([2, 100, 3])
