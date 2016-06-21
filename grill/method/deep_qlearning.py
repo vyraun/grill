@@ -21,7 +21,7 @@ class DeepQLearning(GradientMethod):
 
         observation_var = self.qfunc.get_input_var()
         action_var = T.ivector('action')
-        y_var = T.dvector('y')
+        y_var = T.fvector('y')
 
         qs_var = self.qfunc.get_output_var()
         relevant_qs_var = qs_var[T.arange(self.batchsize),action_var]
@@ -37,7 +37,6 @@ class DeepQLearning(GradientMethod):
         terminal = episode.done
         self._memory.add((observation, action, reward, next_observation, terminal))
         batch = self._memory.sample(self.batchsize)
-
         observations, actions, ys = [], [], []
         for obs, a, r, next_obs, done in batch:
             if done:

@@ -4,7 +4,7 @@ from grill.implementation import MultilayerPerceptron
 from grill.qfunction import ParametricQFunction
 from grill.policy import QGreedyPolicy, EpsilonGreedyPolicy
 from grill.method import DeepQLearning
-from grill.util.misc import param_saver
+from grill.util.misc import param_logger, load_logged_params
 from grill.util.preprocess import flatten
 from grill.core import Engine
 import numpy as np
@@ -15,15 +15,11 @@ import lasagne.layers as L
 import lasagne.nonlinearities as NL
 
 game = 'MountainCar'
-log_dir = '/Users/garrett/BoxSync/github/grill/log/dqn-' + game + '/'
+cfg.LOG_DIR = '~/code/grill/log/dqn-' + game
 env = gym.make(game + '-v0')
 
 mlp = MultilayerPerceptron([2, 100, 3])
-try:
-    mlp.load_params(log_dir + 'params.npz')
-    print 'Successfully loaded network weights from file'
-except:
-    print 'Failed to load network weights from file'
+load_logged_params(mlp)
 
 qfunction = ParametricQFunction(env, mlp)
 qgreedy = QGreedyPolicy(qfunction)
@@ -36,7 +32,7 @@ def update_epsilon(engine, _):
     policy.epsilon = max(1.0-itr/1000000.0, 0.1)
 
 dqn.register_with_engine(trainer)
-trainer.register_callback('post-step', 'save', param_saver(mlp))
+trainer.register_callback('post-step', 'save', param_logger(mlp))
 trainer.register_callback('pre-step', 'update epsilon', update_epsilon)
 #trainer.run(policy, phi=flatten, num_episodes=1000, render=True)
 

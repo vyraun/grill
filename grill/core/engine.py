@@ -39,11 +39,9 @@ class Engine(object):
     EVENTS = ('pre-step', 'post-step', 'pre-episode', 'post-episode')
 
     def __init__(self,
-            log_dir='',
             discount=1,
             episode_memory_size=100 # How many episodes to keep around at a time
     ):
-        self.log_dir = log_dir
         self.discount = discount
         self.episode_memory_size = episode_memory_size
         self._callbacks = {event:{} for event in Engine.EVENTS}

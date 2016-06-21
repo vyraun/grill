@@ -1,4 +1,4 @@
-from grill.util.misc import DEFAULT_EPSILON
+import config as cfg
 import numpy as np
 
 def discounted_partial_sums(rewards, discount):
@@ -22,7 +22,7 @@ def estimate_advantages(baseline, episodes, gamma, lam):
     std = alladv.std()
     mean = alladv.mean()
     for episode in episodes:
-        episode.advantages = (episode.advantages - mean) / (std + DEFAULT_EPSILON)
+        episode.advantages = (episode.advantages - mean) / (std + cfg.DEFAULT_EPSILON)
 
 # def estimate_advantages(vf, paths, gamma, lam):
 #     # Compute return, baseline, advantage

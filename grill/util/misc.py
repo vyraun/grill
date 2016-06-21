@@ -1,8 +1,9 @@
 import os
 import numpy as np
 import theano.tensor as T
+import grill.core.config as cfg
+from grill.util.file import logpath
 
-DEFAULT_EPSILON = 1e-8
 
 def superhash(obj):
     if isinstance(obj, np.ndarray):
@@ -12,10 +13,10 @@ def superhash(obj):
     else:
         return hash(obj)
 
-def safelog(x, epsilon=DEFAULT_EPSILON):
+def safelog(x, epsilon=cfg.DEFAULT_EPSILON):
     return np.log(x + epsilon)
 
-def safelog_sym(x, epsilon=DEFAULT_EPSILON):
+def safelog_sym(x, epsilon=cfg.DEFAULT_EPSILON):
     return T.log(x + epsilon)
 
 def add_dim(array, axis=0):
@@ -28,12 +29,19 @@ def sanity_check_params(params):
         assert not np.any(np.isnan(param))
 
 # Intended to manufacture callbacks
-def param_saver(parametric, filename='params.npz', frequency=1):
+def param_logger(parametric, filename='params.npz', frequency=1):
     def save(engine, _=None):
-        itr = engine.itr
-        if itr % frequency == 0:
-            parametric.save_params(os.path.join(engine.log_dir, filename))
+        if engine.itr % frequency == 0:
+            parametric.save_params(logpath(filename))
     return save
+
+def load_params(parametric, filename='params.npz', onfail=None):
+    try:
+        parametric.load_params(logpath(filename))
+        print 'Successfully loaded network weights from file'
+    except:
+        print 'Failed to load network weights from file'
+        if onfail: onfail()
 
 def keywise_cat(dicts, keys):
     return [np.concatenate([d[key] for d in dicts]) for key in keys]
