@@ -23,19 +23,21 @@ Grill stands on the shoulders of giants:
 
 Just show me some code, already
 -------------------------------
-    import gym
-    from grill.qfunction import TabularQFunction
-    from grill.policy import QGreedyPolicy, EpsilonGreedyPolicy
-    from grill.method import QLearning
-    from grill.core import Engine
-    
-    env = gym.make('FrozenLake-v0')                             # Create the environment
-    qfunction = TabularQFunction(env)                           # Instantiate a tabular Q function
-    qgreedy = QGreedyPolicy(qfunction)                          # Create a policy that selects the greedy Q action every time
-    policy = EpsilonGreedyPolicy(qgreedy, 0.1)                  # Wrap it in a policy that selects a random action w.p. epsilon
-    qlearning = QLearning(qfunction)                            # Use Q-learning to train the agent
-    trainer = Engine()                                          # Create an engine to perform the training
-    qlearning.register_with_engine(trainer)                     # Install callbacks in the engine to perform the Q-learning
-    trainer.run(policy, num_episodes=10000, render=False)       # Run and train the agent
-    player = Engine()                                           # Create another engine just to play the learned policy
-    player.run(qgreedy, num_episodes=100, render=True)          # Run the greedy policy
+```python
+import gym
+from grill.qfunction import TabularQFunction
+from grill.policy import QGreedyPolicy, EpsilonGreedyPolicy
+from grill.method import QLearning
+from grill.core import Engine
+
+env = gym.make('FrozenLake-v0')                             # Create the environment
+qfunction = TabularQFunction(env)                           # Instantiate a tabular Q function
+qgreedy = QGreedyPolicy(qfunction)                          # Create a policy that selects the greedy Q action every time
+policy = EpsilonGreedyPolicy(qgreedy, 0.1)                  # Wrap it in a policy that selects a random action w.p. epsilon
+qlearning = QLearning(qfunction)                            # Use Q-learning to train the agent
+trainer = Engine()                                          # Create an engine to perform the training
+qlearning.register_with_engine(trainer)                     # Install callbacks in the engine to perform the Q-learning
+trainer.run(policy, num_episodes=10000, render=False)       # Run and train the agent
+player = Engine()                                           # Create another engine just to play the learned policy
+player.run(qgreedy, num_episodes=100, render=True)          # Run the greedy policy
+```
