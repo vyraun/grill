@@ -13,14 +13,6 @@ class ConvolutionalNetwork(TheanoFunction):
     ):
         assert len(input_shape) == 3
 
-        self.input_shape = input_shape
-        self.num_out = num_out
-        self.filters = filters
-        self.poolings = poolings
-        self.hidden_sizes = hidden_sizes
-        self.hidden_nl = hidden_nl
-        self.output_nl = output_nl
-
         self._input_var = T.ftensor4('input')
 
         l_prev = L.InputLayer(
@@ -49,16 +41,3 @@ class ConvolutionalNetwork(TheanoFunction):
         self._param_vars = L.get_all_params(l_output, trainable=True)
 
         super(ConvolutionalNetwork, self).__init__()
-
-
-    # def clone(self):
-    #     convnet = ConvolutionalNetwork(
-    #             input_shape=self.input_shape,
-    #             num_out=self.num_out,
-    #             filters=self.filters,
-    #             poolings=self.poolings,
-    #             hidden_sizes=self.hidden_sizes,
-    #             hidden_nl=self.hidden_nl,
-    #             output_nl=self.output_nl)
-    #     convnet.set_params(self.get_params())
-    #     return convnet

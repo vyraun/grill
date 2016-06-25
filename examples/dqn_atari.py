@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt
 
 
 game = sys.argv[1]
-cfg.LOG_DIR = '~/code/grill/log/dqn-' + game
+cfg.LOG_DIR = '~/BoxSync/github/grill/log/dqn-' + game
 
 def update_epsilon(engine, _):
     itr = engine.itr
@@ -45,10 +45,11 @@ qgreedy = QGreedyPolicy(qfunction)
 policy = EpsilonGreedyPolicy(qgreedy, epsilon=0.5)
 dqn = DeepQLearning(qfunction,
         N=10000,
-        update_fn=lambda loss, params: lasagne.updates.rmsprop(loss, params,
-                learning_rate=0.00025,
-                rho=0.95,
-                epsilon=0.01))
+        update_fn=lasagne.updates.adam)
+        # update_fn=lambda loss, params: lasagne.updates.rmsprop(loss, params,
+        #         learning_rate=0.00025,
+        #         rho=0.95,
+        #         epsilon=0.01))
 trainer = Engine()
 dqn.register_with_engine(trainer)
 trainer.register_callback('post-step', 'save', param_logger(convnet))

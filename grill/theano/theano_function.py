@@ -25,7 +25,7 @@ class TheanoFunction(object):
         return self._param_vars
 
     def get_params(self):
-        return [param_var.eval() for param_var in self.get_param_vars()]
+        return [np.array(param_var.eval()) for param_var in self.get_param_vars()]
 
     def set_params(self, params):
         assert len(params) == len(self._param_vars)
