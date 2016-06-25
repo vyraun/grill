@@ -1,9 +1,10 @@
+import cPickle as pickle
 import os
 import numpy as np
+import matplotlib.pyplot as plt
 import theano.tensor as T
 import grill.core.config as cfg
 from grill.util.file import logpath
-
 
 def superhash(obj):
     if isinstance(obj, np.ndarray):
@@ -48,3 +49,10 @@ def keywise_cat(dicts, keys):
 
 def attrwise_cat(objects, keys):
     return [np.concatenate([getattr(o, key) for o in objects]) for key in keys]
+
+def show_matrix(m):
+    plt.imshow(m)
+    plt.show()
+
+def pickle_copy(o):
+    return pickle.loads(pickle.dumps(o))

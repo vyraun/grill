@@ -1,6 +1,6 @@
 from gradient_method import GradientMethod
 from grill.util.memory import Memory
-from grill.util.misc import add_dim, sanity_check_params
+from grill.util.misc import add_dim, sanity_check_params, pickle_copy
 import numpy as np
 import theano.tensor as T
 
@@ -8,12 +8,12 @@ import theano.tensor as T
 class DeepQLearning(GradientMethod):
     def __init__(
             self, qfunc,
-            learning_rate=0.001,
+            update_fn,
             batchsize=32,
             N=1000000,  # Memory replay capacity
             C=10000     # How many iterations between resetting target network
     ):
-        super(DeepQLearning, self).__init__('DQN', learning_rate, batchsize)
+        super(DeepQLearning, self).__init__('DQN', update_fn, batchsize)
         self.qfunc = qfunc
         self.N = N
         self.C = C
@@ -33,22 +33,22 @@ class DeepQLearning(GradientMethod):
         )
 
     def post_step(self, engine, episode):
+        if engine.itr % self.C == 0:
+            self._target = pickle_copy(self.qfunc)
+            print 'Cloning target network'
+
         observation, action, next_observation, reward = episode.latest_transition()
         terminal = episode.done
         self._memory.add((observation, action, reward, next_observation, terminal))
         batch = self._memory.sample(self.batchsize)
         observations, actions, ys = [], [], []
         for obs, a, r, next_obs, done in batch:
-            if done:
-                y = reward
-            else:
-                current_params = self.qfunc.get_params()
-                if engine.itr % self.C == 0:
-                    self._target_params = current_params
-                self.qfunc.set_params(self._target_params)
-                best_q = self.qfunc.best_value(next_observation)
-                self.qfunc.set_params(current_params)
-                y = reward + engine.discount * best_q
+            # if done:
+            #     y = reward
+            # else:
+            #     best_q = self._target.best_value(next_observation)
+            #     y = reward + engine.discount * best_q
+            y = reward if done else reward + engine.discount * self._target.best_value(next_observation)
 
             observations.append(obs)
             actions.append(a)
@@ -56,3 +56,29 @@ class DeepQLearning(GradientMethod):
 
         self._update(np.stack(observations), np.array(actions, dtype='int32'), np.array(ys))
         sanity_check_params(self.qfunc.get_params())
+
+    # def post_step(self, engine, episode):
+    #     observation, action, next_observation, reward = episode.latest_transition()
+    #     terminal = episode.done
+    #     self._memory.add((observation, action, reward, next_observation, terminal))
+    #     batch = self._memory.sample(self.batchsize)
+    #     observations, actions, ys = [], [], []
+    #     for obs, a, r, next_obs, done in batch:
+    #         if done:
+    #             y = reward
+    #         else:
+    #             current_params = self.qfunc.get_params()
+    #             if engine.itr % self.C == 0:
+    #                 self._target_params = current_params
+    #                 print engine.itr, 'Updating target params'
+    #             self.qfunc.set_params(self._target_params)
+    #             best_q = self.qfunc.best_value(next_observation)
+    #             self.qfunc.set_params(current_params)
+    #             y = reward + engine.discount * best_q
+    #
+    #         observations.append(obs)
+    #         actions.append(a)
+    #         ys.append(y)
+    #
+    #     self._update(np.stack(observations), np.array(actions, dtype='int32'), np.array(ys))
+    #     sanity_check_params(self.qfunc.get_params())

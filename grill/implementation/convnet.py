@@ -5,15 +5,21 @@ import lasagne.layers as L
 import lasagne.nonlinearities as NL
 
 class ConvolutionalNetwork(TheanoFunction):
-    def __init__(self, input_shape, num_out,
-            filters=[[32, 8], [64, 4], [64, 3]],
-            poolings=[4, 2, 1],
+    def __init__(self, input_shape, num_out, filters, poolings,
             conv_nl=NL.rectify,
-            hidden_sizes=[512],
-            fc_nl=NL.rectify,
+            hidden_sizes=[100],
+            hidden_nl=NL.rectify,
             output_nl=None  # Change to softmax to get probabilities
     ):
         assert len(input_shape) == 3
+
+        self.input_shape = input_shape
+        self.num_out = num_out
+        self.filters = filters
+        self.poolings = poolings
+        self.hidden_sizes = hidden_sizes
+        self.hidden_nl = hidden_nl
+        self.output_nl = output_nl
 
         self._input_var = T.ftensor4('input')
 
@@ -30,7 +36,7 @@ class ConvolutionalNetwork(TheanoFunction):
         for size in hidden_sizes:
             l_prev = L.DenseLayer(l_prev,
                 num_units=size,
-                nonlinearity=fc_nl
+                nonlinearity=hidden_nl
             )
 
         l_output = L.DenseLayer(l_prev,
@@ -43,3 +49,16 @@ class ConvolutionalNetwork(TheanoFunction):
         self._param_vars = L.get_all_params(l_output, trainable=True)
 
         super(ConvolutionalNetwork, self).__init__()
+
+
+    # def clone(self):
+    #     convnet = ConvolutionalNetwork(
+    #             input_shape=self.input_shape,
+    #             num_out=self.num_out,
+    #             filters=self.filters,
+    #             poolings=self.poolings,
+    #             hidden_sizes=self.hidden_sizes,
+    #             hidden_nl=self.hidden_nl,
+    #             output_nl=self.output_nl)
+    #     convnet.set_params(self.get_params())
+    #     return convnet

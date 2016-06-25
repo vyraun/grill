@@ -20,3 +20,6 @@ class ParametricQFunction(DiscreteQFunction, TheanoContainer):
 
     def best_actions(self, observations):
         return np.argmax(self.get_all_multiple(observations), axis=1)
+
+    # def clone(self):
+    #     return ParametricQFunction(self.env, self.implementation)
