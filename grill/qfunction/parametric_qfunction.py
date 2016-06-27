@@ -1,6 +1,7 @@
 from qfunction import DiscreteQFunction
 from grill.theano import TheanoContainer
 from grill.util.misc import add_dim
+import numpy as np
 
 # Skeleton for function approximation. We assume that the implementation's call
 # operator produces all Q-values for several observations at a time

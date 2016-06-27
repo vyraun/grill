@@ -1,6 +1,6 @@
 from gradient_method import GradientMethod
 from grill.util.memory import Memory
-from grill.util.misc import add_dim, sanity_check_params, pickle_copy
+from grill.util.misc import sanity_check_params, pickle_copy, keywise
 import numpy as np
 import theano.tensor as T
 
@@ -41,12 +41,7 @@ class DeepQLearning(GradientMethod):
         terminal = episode.done
         self._memory.add((observation, action, reward, next_observation, terminal))
         batch = self._memory.sample(self.batchsize)
-        observations, actions, ys = [], [], []
-        for obs, a, r, next_obs, done in batch:
-            y = reward if done else reward + engine.discount * self._target.best_value(next_observation)
-            observations.append(obs)
-            actions.append(a)
-            ys.append(y)
-
+        observations, actions, rewards, next_observations, terminals = keywise(batch, range(5))
+        ys = rewards + (1-terminals) * engine.discount * self._target.best_values(next_observations)
         self._update(np.stack(observations), np.array(actions, dtype='int32'), np.array(ys))
         sanity_check_params(self.qfunc.get_params())

@@ -44,6 +44,12 @@ def load_params(parametric, filename='params.npz', onfail=None):
         print 'Failed to load network weights from file'
         if onfail: onfail()
 
+def keywise(dicts, keys):
+    return [np.array([d[key] for d in dicts]) for key in keys]
+
+def attrwise(objects, keys):
+    return [np.array([getattr(o, key) for o in objects]) for key in keys]
+
 def keywise_cat(dicts, keys):
     return [np.concatenate([d[key] for d in dicts]) for key in keys]
 

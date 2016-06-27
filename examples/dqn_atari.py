@@ -20,10 +20,16 @@ import matplotlib.pyplot as plt
 
 game = sys.argv[1]
 cfg.LOG_DIR = '~/BoxSync/github/grill/log/dqn-' + game
+eps_max = 1.0
+eps_min = 0.1
+eps_steps = 1e6
 
 def update_epsilon(engine, _):
     itr = engine.itr
-    policy.epsilon = max(1.0-itr/1000000.0, 0.1)
+    # policy.epsilon = max(1.0-itr/1000000.0, 0.1)
+    annealed = eps_max - (eps_max - eps_min) * (itr / eps_steps)
+    policy.epsilon = max(annealed, eps_min)
+    # print policy.epsilon
 
 
 m = 4
