@@ -88,6 +88,7 @@ class Engine(object):
         print 'Running!'
         self.reset()
         env = policy.env
+        discounted_returns = []
         for episode_num in range(num_episodes):
             self._run_callbacks('pre-episode')
             episode = self.new_episode()
@@ -115,4 +116,6 @@ class Engine(object):
             episode.finalize()
             episode.discounted_return = discounted_sum(episode.rewards, self.discount)
             print episode_num, episode.discounted_return
+            discounted_returns.append(episode.discounted_return)
             self._run_callbacks('post-episode')
+        return discounted_returns

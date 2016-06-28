@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt
 
 
 game = sys.argv[1]
-cfg.LOG_DIR = '~/BoxSync/github/grill/log/dqn-' + game
+cfg.LOG_DIR = '~/code/grill/log/dqn-' + game
 eps_max = 1.0
 eps_min = 0.1
 eps_steps = 1e6
@@ -56,12 +56,27 @@ dqn = DeepQLearning(qfunction,
         #         learning_rate=0.00025,
         #         rho=0.95,
         #         epsilon=0.01))
-trainer = Engine()
+trainer = Engine(episode_memory_size=10)
 dqn.register_with_engine(trainer)
 trainer.register_callback('post-step', 'save', param_logger(convnet))
 trainer.register_callback('pre-step', 'update epsilon', update_epsilon)
 # trainer.register_callback('post-step', 'show observation', show_obs)
-trainer.run(policy, phi=preprocess, num_episodes=1000000, render=True)
+player = Engine(episode_memory_size=10)
 
-player = Engine()
-player.run(EpsilonGreedyPolicy(qgreedy, epsilon=0.05), phi=preprocess, num_episodes=25, render=True)
+returns = []
+for epoch in range(100):
+    trainer.run(policy,
+            phi=preprocess,
+            num_episodes=10,
+            render=False)
+
+    avg_return = np.mean(player.run(EpsilonGreedyPolicy(qgreedy, epsilon=0.05),
+            phi=preprocess,
+            num_episodes=10,
+            render=False))
+    print 'Epoch', epoch, ':', avg_return
+    returns.append(avg_return)
+
+plt.figure()
+plt.plot(returns)
+plt.show()
