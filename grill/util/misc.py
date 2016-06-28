@@ -56,9 +56,14 @@ def keywise_cat(dicts, keys):
 def attrwise_cat(objects, keys):
     return [np.concatenate([getattr(o, key) for o in objects]) for key in keys]
 
-def show_matrix(m):
-    plt.imshow(m)
+def show_matrices(ms, cmap=None):
+    for m in ms:
+        plt.figure()
+        plt.imshow(m, cmap)
     plt.show()
+
+def show_matrix(m, cmap=None):
+    show_matrices([m], cmap)
 
 def pickle_copy(o):
     return pickle.loads(pickle.dumps(o))
