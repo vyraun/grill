@@ -25,7 +25,7 @@ class DeepQLearning(GradientMethod):
 
         qs_var = self.qfunc.get_output_var()
         relevant_qs_var = qs_var[T.arange(self.batchsize),action_var]
-        loss_var = T.sum((y_var - relevant_qs_var)**2)/self.batchsize
+        loss_var = T.mean((y_var - relevant_qs_var)**2)
         self._build_update(
                 [observation_var, action_var, y_var],
                 qfunc.get_param_vars(),
@@ -43,5 +43,5 @@ class DeepQLearning(GradientMethod):
         batch = self._memory.sample(self.batchsize)
         observations, actions, rewards, next_observations, terminals = keywise(batch, range(5))
         ys = rewards + (1-terminals) * engine.discount * self._target.best_values(next_observations)
-        self._update(np.stack(observations), np.array(actions, dtype='int32'), np.array(ys))
+        self._update(observations, actions, ys)
         sanity_check_params(self.qfunc.get_params())

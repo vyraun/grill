@@ -37,9 +37,9 @@ def atari_preprocessor(m=4, size=(84,84)):
         for i in range(m):
             maxed = np.maximum(raw_observations[-(1+i)], raw_observations[-(i+2)])
             luma = luminance(maxed)
-            resized = imresize(luma, size)
+            resized = imresize(luma, size).astype('float32')
             recent_frames.append(resized)
 
-        # Stack and normalize pixel values (to avoid saturating neural net)
+        # Stack and normalize pixel values
         return np.stack(recent_frames) / 255.0
     return preprocess
