@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt
 
 
 game = sys.argv[1]
-cfg.LOG_DIR = '~/code/grill/log/dqn-' + game
+cfg.LOG_DIR = '~/workspace/grill/log/dqn-' + game
 eps_max = 1.0
 eps_min = 0.1
 eps_steps = 1e6
